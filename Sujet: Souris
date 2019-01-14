@@ -1,0 +1,171 @@
+// ==================================================================================================================== //
+// ==================================         Auteur du TP Michel GINESTE         ===================================== //
+// 1. Par des impression à la console, visualiser les évènements de la souris
+// 2. Déplacer la fenêtre par "draggage", la souris étant positionnée dans la zone de contenu de la fenêtre
+// ==================================================================================================================== //
+package souris;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.MouseEvent;
+
+public class Souris {
+    private static Fenetre fenetre;
+    
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater (new Runnable() {
+            public void run() {
+                fenetre = new Fenetre("UP AND DOWN SWAGG");
+            }
+        }
+        );  
+    }
+}
+
+// ==================================================================================================================== //
+// ========================================= Classe EcouteFenetre
+package souris;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowAdapter;
+
+public class EcouteFenetre extends WindowAdapter {
+  
+    @Override
+    public void windowOpened(WindowEvent e) {
+       System.out.println("OUVERTURE DE LA FENETRE");
+    } 
+
+    @Override
+    public void windowClosing(WindowEvent e) {
+        System.out.println("FERMETURE DE LA FENETRE EN COURS");
+        System.exit(0);
+    }
+
+    @Override
+    public void windowClosed(WindowEvent e) {
+        System.out.println("FERMETURE DE LA FENETRE TERMINEE");
+    }
+
+    @Override
+    public void windowIconified(WindowEvent e) {
+        System.out.println("LA FENETRE A DISPAARRRUUU (en icone)");
+    }
+
+    @Override
+    public void windowDeiconified(WindowEvent e) {
+        System.out.println("MAGIE MAGIE !!! LA FENETRE EST APPARUE (bye bye l'icone)");
+    }
+
+    @Override
+    public void windowActivated(WindowEvent e) {
+        System.out.println("MONSTER MODE [ON]");
+    }
+
+    @Override
+    public void windowDeactivated(WindowEvent e) {
+        System.out.println("TAPETTE MODE [ON]");
+    } 
+}
+
+// ==================================================================================================================== //
+// ========================================= Classe Fenetre
+package souris;
+import javax.swing.JFrame;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
+
+public class Fenetre extends JFrame implements MouseListener, MouseMotionListener,
+                                                MouseWheelListener {  
+    private int posX = 0, posY = 0;
+                                                                                      
+    public Fenetre(String titre) {                                              
+        super(titre);
+        setBounds(400, 400, 400, 400);
+        addWindowListener(new EcouteFenetre());
+        addMouseListener(this);
+        addMouseMotionListener(this);
+        addMouseWheelListener(this);
+        setVisible(true);
+    }
+
+// ========================================================= MouseListener
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        System.out.println("TU M'AS FRAPPE ! (juste cliqué en vrai...)");
+        if (getTitle().compareToIgnoreCase("J'AI CLIQUE ! MODE HORIZONTAL[ON]") != 0) {
+        this.setTitle("J'AI CLIQUE ! MODE HORIZONTAL[ON]");
+        } else {
+            this.setTitle("UP AND DOWN SWAGG");
+        }
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+        System.out.println("AIE !!!!");
+        posX = e.getX();    
+        posY = e.getY();
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+        System.out.println("Ca va mieux....");
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+       System.out.println("Je savais que je te manquais !");
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+       System.out.println("NE T'EN VA PAAAS");
+    }
+    
+// ========================================================= MouseMotionListener     
+    @Override
+    public void mouseDragged(MouseEvent e) {
+        int depX = e.getX() - posX;
+        int depY = e.getY() - posY;
+        setLocation(getX()+depX, getY()+depY);
+
+    }
+
+    @Override
+    public void mouseMoved(MouseEvent e) {
+        
+    }
+
+// ========================================================= MouseWheelListener
+    @Override
+    public void mouseWheelMoved(MouseWheelEvent e) {
+        int rotation = e.getWheelRotation(); 
+
+        if (getTitle().compareToIgnoreCase("J'AI CLIQUE ! MODE HORIZONTAL[ON]") != 0) {
+            if (rotation < 0) { 
+                setLocation(getX(),getY()-10);
+            } else { 
+                setLocation(getX(),getY()+10);
+            } 
+        } else {
+            if (rotation < 0) { 
+                setLocation(getX()-10,getY());
+            } else {  
+                setLocation(getX()+10,getY());
+            }
+        }
+    }
+// ==================================         CORRECTION         ===================================== //
+//    public void mouseWheelMoved(MouseWheelEvent e) {
+//        if (getTitle().compareTo("J'AI CLIQUE ! MODE HORIZONTAL[ON]") != 0) {
+//             setLocation(getLocation().x,
+//                        getLocation().y + e.getUnitsToScroll());
+//        } else {
+//             setLocation(getLocation().x + e.getUnitsToScroll(),
+//                        getLocation().y); 
+//        }
+//    }
+}
+
