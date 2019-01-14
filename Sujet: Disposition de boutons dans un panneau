@@ -1,0 +1,161 @@
+// ==================================================================================================================== //
+// ==================================         Auteur du TP Michel GINESTE         ===================================== //
+// Cette application permet l'affichage de composants JCheckBox dont le nombre est choisi grâce à un contrôle de type
+// JSpinner. Le bouton ETAT permet de visualiser à la console l'état des cases à cocher
+// ==================================================================================================================== //
+package controle2;
+
+public class Controle2 {
+
+    public static void main(String[] args) {
+       javax.swing.SwingUtilities.invokeLater (
+            new Runnable() {
+                public void run() {
+                    Fenetre fenetre = new Fenetre("Controle 2");
+                }
+            }
+        );  
+    } 
+}
+
+// ==================================================================================================================== //
+// ===================================== Classe EcouteFenetre
+package controle2;
+
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+
+public class EcouteFenetre extends WindowAdapter {
+    
+    public void windowClosing(WindowEvent e) {
+        System.exit(0);
+    }
+}
+
+// ==================================================================================================================== //
+// ===================================== Classe Fenetre
+package controle2;
+
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+import javax.swing.border.Border;
+import javax.swing.event.*;
+import utilitairesMG.graphique.*;
+
+
+public class Fenetre extends JFrame implements ActionListener, ChangeListener {
+    
+    private JPanel fond;
+    private int n, num;
+    private JScrollPane defileur;
+    private JScrollPane defileurSpinner;
+    private Border blackLine = BorderFactory.createLineBorder(Color.black);
+    
+    private JPanel haut;
+    private JPanel haut1;
+    private JPanel haut2;
+    private JLabel texteH;
+    private JSpinner spinner;
+    
+    private JPanel centre;
+    private JButton exe;
+    
+    private JCheckBox nCase;
+    private JCheckBox myCase;
+    
+    private JPanel bas;
+    private JButton etat;
+    
+    public Fenetre (String s) {
+        super(s);
+        addWindowListener(new EcouteFenetre());
+        
+        fond = new JPanel();
+        fond.setLayout(new BorderLayout());
+// ==================================================== PANNEAU HAUT (SPINNER)       
+// ============================ SOUS PANNEAU HAUT 1 (texteH + spinner)
+        haut1 = new JPanel();
+        haut1.setLayout( new FlowLayout());
+        haut1.setPreferredSize(new Dimension(400, 50));
+        haut1.setBorder(blackLine) ;
+        texteH = new JLabel("Nombre de JCheckBox à créer: ");
+        haut1.add(texteH);
+   
+        SpinnerModel model = new SpinnerNumberModel(0,0,100,1) {};
+        spinner = new JSpinner(model);
+        spinner.addChangeListener(this);
+        haut1.add(spinner);
+
+ // ============================ SOUS PANNEAU HAUT 2 (bouton EXECUTABLE)       
+        haut2 = new JPanel();
+        haut2.setLayout( new FlowLayout());
+        exe = new JButton("EXECUTER");
+        exe.addActionListener(this);
+        haut2.add(exe);
+// ============
+        haut = new JPanel();
+        haut.setLayout(new BorderLayout());
+        haut.add(haut1, BorderLayout.NORTH);
+        haut.add(haut2);   
+// ==================================================== PANNEAU CENTRE BAS (JCheckBox) 
+        centre = new JPanel();
+        centre.setLayout(new FlowLayoutMG());
+        centre.setBorder(blackLine);
+        
+        defileur = new JScrollPane(centre);  
+// ==================================================== PANNEAU BAS (ETAT)
+        bas = new JPanel();
+        
+        etat = new JButton("ETAT");
+        etat.addActionListener(this);
+
+        bas.add(etat);
+// =============================================================================        
+        fond.add(haut, BorderLayout.NORTH);
+        fond.add(defileur);
+        fond.add(bas, BorderLayout.SOUTH);
+        
+        add(fond);
+        pack();
+        setLocationRelativeTo(null);
+        setVisible(true);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource() == exe) {
+            spinner.getComponentCount();
+            centre.removeAll();
+            centre.setPreferredSize(new Dimension(0,50));
+            for (num = 1; num <= n; num++) {
+                nCase = new JCheckBox("Case " + (num));
+                nCase.addActionListener(this);
+                nCase.setOpaque(false);
+                
+                centre.add(nCase);
+                pack(); 
+            }
+            FlowLayoutMG.unifieTailleComposants(centre);
+            centre.validate();
+            centre.revalidate();
+            centre.repaint();
+        }
+
+        if (e.getSource() == etat) {
+            for (num = 0; num < centre.getComponentCount(); num++) {
+                myCase = (JCheckBox)centre.getComponent(num);
+                if (myCase.isSelected()) {
+                    System.out.println("Case " + (num+1) + " sélectionnée");
+                } else {
+                    System.out.println("Case " + (num+1) + " non sélectionnée");
+                }
+            }
+        }
+    }
+
+    @Override
+    public void stateChanged(ChangeEvent e) {
+        n = (int)spinner.getValue();
+    }
+}
