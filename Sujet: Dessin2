@@ -1,0 +1,126 @@
+// ==================================================================================================================== //
+// ==================================         Auteur du TP Michel GINESTE         ===================================== //
+// Rendre le tracé des clics de souris permanents dans 2 panneaux de la fenêtre.
+// ==================================================================================================================== //
+package dessin;
+
+public class Dessin {
+
+    public static void main(String[] args) {
+        javax.swing.SwingUtilities.invokeLater (
+            new Runnable() {
+                public void run() {
+                    Fenetre fenetre = new Fenetre("Trace de clics permanents");
+                }
+            }
+        ); 
+    }
+}
+
+// ==================================================================================================================== //
+// ====================================== Classe EcouteFenetre
+package dessin;
+
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+
+public class EcouteFenetre extends WindowAdapter {
+    
+    public void windowClosing(WindowEvent e) {
+        System.exit(0);
+    }
+}
+
+// ==================================================================================================================== //
+// ====================================== Classe Panneau
+package dessin;
+
+import java.awt.*;
+import java.awt.event.*;
+import java.util.*;
+import javax.swing.*;
+
+public class Panneau extends JPanel implements MouseListener {
+
+    private Point p;
+    private ArrayList<Point> aLP = new ArrayList<Point>();
+    
+    public Panneau() {
+        addMouseListener(this);
+    }
+    
+    public void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        for (int i = 0 ; i < aLP.size(); i++) {
+            if (aLP.get(i) != null){
+               g.fillRect(aLP.get(i).x, aLP.get(i).y, 8, 8);
+            }
+        }
+    }
+    
+    @Override
+    public void mouseClicked(MouseEvent e) {
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {  
+        p = e.getPoint();
+        aLP.add(p);
+        
+        repaint();
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {  
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+    }
+}
+
+// ==================================================================================================================== //
+// ====================================== Classe Fenetre
+package dessin;
+
+import java.awt.*;
+import javax.swing.*;
+
+public class Fenetre extends JFrame {
+    
+    private JPanel panFond;
+    private Panneau panG;
+    private Panneau panD;
+    
+    public Fenetre(String s) {
+        super(s);
+        addWindowListener(new EcouteFenetre());
+       
+        panFond = new JPanel();
+        panFond.setBackground(Color.GREEN);
+        panFond.setLayout(new FlowLayout());
+        
+        panG = new Panneau();
+        panG.setBackground(Color.WHITE);
+        panG.setForeground(Color.ORANGE);
+        panG.setLayout(new FlowLayout());
+        panG.setPreferredSize(new Dimension(400, 400));
+        
+        panD = new Panneau();
+        panD.setBackground(Color.BLACK);
+        panD.setForeground(Color.RED);
+        panD.setLayout(new FlowLayout());
+        panD.setPreferredSize(new Dimension(400, 400));
+        
+        panFond.add(panG, BorderLayout.WEST);
+        panFond.add(panD, BorderLayout.EAST);
+    
+        add(panFond);
+        pack();
+        setVisible(true);
+    }
+}
